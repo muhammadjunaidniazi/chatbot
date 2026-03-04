@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+    <title>ZX Grow · Premium IPTV</title>
+    <!-- Font Awesome 6 -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600;14..32,700;14..32,800&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        /* ===== LIGHT THEME – professional, clean ===== */
+        :root {
+            --primary: #c1121f;
+            --primary-light: #d42e3b;
+            --whatsapp: #25D366;
+            --whatsapp-dark: #1da85c;
+            --bg: #f5f7fa;
+            --surface: #ffffff;
+            --surface-alt: #f0f3f7;
+            --text: #1e2b3a;
+            --text-muted: #4a5c6e;
+            --border: #dce2ec;
+            --shadow-sm: 0 8px 20px rgba(0,0,0,0.03), 0 2px 6px rgba(0,20,40,0.05);
+            --shadow-lg: 0 20px 40px -10px rgba(0,30,60,0.15);
+            --header-bg: rgba(255,255,255,0.9);
+            --footer-bg: #eef2f6;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.5;
+        }
+
+        /* ===== VIDEO BACKGROUND (animated) ===== */
+        .video-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            animation: slowZoom 25s infinite alternate ease-in-out;
+        }
+        @keyframes slowZoom {
+            0% { transform: scale(1); }
+            100% { transform: scale(1.08); }
+        }
+        .video-backdrop video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: auto;
+            height: auto;
+            transform: translate(-50%, -50%);
+            object-fit: cover;
+            opacity: 0.15;
+            pointer-events: none;
+        }
+
+        .zx-container {
+            max-width: 1300px;
+            margin: 0 auto;
+            padding: 0 20px;
+            position: relative;
+        }
+
+        /* ===== HEADER with TV emoji and logo ===== */
+        .zx-header {
+            background: var(--header-bg);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .zx-header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 85px;
+        }
+
+        .logo-area {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .tv-emoji {
+            font-size: 3rem;
+            filter: drop-shadow(0 4px 8px rgba(193,18,31,0.4));
+            animation: emojiFloat 3s infinite ease-in-out;
+        }
+        @keyframes emojiFloat {
+            0% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-5px) rotate(3deg); }
+            100% { transform: translateY(0) rotate(0deg); }
+        }
+        .logo-img img {
+            max-height: 60px;
+            width: auto;
+            display: block;
+            filter: drop-shadow(0 4px 8px rgba(193,18,31,0.2));
+        }
+
+        /* navigation */
+        .nav-menu {
+            display: flex;
+            gap: 8px;
+            background: var(--surface);
+            padding: 6px;
+            border-radius: 70px;
+            border: 1px solid var(--border);
+        }
+        .nav-link {
+            padding: 10px 24px;
+            border-radius: 60px;
+            font-weight: 600;
+            font-size: 1rem;
+            background: transparent;
+            border: none;
+            color: var(--text);
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .nav-link.active {
+            background: var(--primary);
+            color: white;
+            box-shadow: 0 6px 14px rgba(193,18,31,0.3);
+        }
+        .nav-link:not(.active):hover {
+            background: var(--surface-alt);
+        }
+
+        /* whatsapp icons */
+        .wa-header-icons {
+            display: flex;
+            gap: 12px;
+        }
+        .wa-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: var(--whatsapp);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            text-decoration: none;
+            box-shadow: 0 8px 16px rgba(37,211,102,0.4);
+            border: 2px solid white;
+            animation: wa-pulse 2.2s infinite ease-in-out;
+        }
+        .wa-icon:hover {
+            transform: scale(1.1) rotate(5deg);
+            background: var(--whatsapp-dark);
+            animation: none;
+        }
+        @keyframes wa-pulse {
+            0% { box-shadow: 0 0 0 0 rgba(37,211,102,0.5); }
+            70% { box-shadow: 0 0 0 12px rgba(37,211,102,0); }
+            100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); }
+        }
+
+        /* hero section */
+        .hero-section {
+            padding: 50px 0 30px;
+            display: flex;
+            align-items: center;
+            gap: 40px;
+            flex-wrap: wrap;
+        }
+        .hero-content {
+            flex: 1 1 400px;
+        }
+        .hero-badge {
+            font-size: 1.3rem;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+        .hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 1.2rem;
+        }
+        .hero-title span {
+            color: var(--primary);
+        }
+        .hero-desc {
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            max-width: 550px;
+            margin-bottom: 2rem;
+        }
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+            padding: 0.9rem 2.2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 10px 20px rgba(193,18,31,0.3);
+        }
+        .btn-primary:hover {
+            background: var(--primary-light);
+            transform: translateY(-4px);
+        }
+        .btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+            padding: 0.9rem 2.2rem;
+            border-radius: 60px;
+            font-weight: 700;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            cursor: pointer;
+        }
+        .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+        /* TWO animated TV/movie images */
+        .hero-images {
+            flex: 1 1 400px;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            perspective: 800px;
+        }
+        .tv-card {
+            border-radius: 25px;
+            overflow: hidden;
+            box-shadow: var(--shadow-lg);
+            aspect-ratio: 4/3;
+            border: 3px solid white;
+            animation: float-tv 6s infinite alternate ease-in-out;
+            background: #ddd;
+        }
+        .tv-card:first-child {
+            animation-delay: 0s;
+        }
+        .tv-card:last-child {
+            animation-delay: 1s;
+        }
+        @keyframes float-tv {
+            0% { transform: translateY(0) rotateY(2deg); }
+            100% { transform: translateY(-15px) rotateY(6deg) rotateX(2deg); }
+        }
+        .tv-card img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
+
+        /* package cards */
+        .packages-container {
+            margin: 3rem 0 2rem;
+        }
+        .package-card {
+            background: var(--surface);
+            border-radius: 40px;
+            padding: 2rem 1.8rem;
+            margin-bottom: 2rem;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+        }
+        .package-card.popular {
+            border: 2px solid var(--primary);
+            box-shadow: 0 25px 40px -12px rgba(193,18,31,0.25);
+        }
+        .package-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 1rem;
+        }
+        .package-header h2 {
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .package-price {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--text);
+        }
+        .feature-list {
+            list-style: none;
+            margin: 1.2rem 0;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 0.5rem 1rem;
+        }
+        .feature-list li {
+            padding: 0.3rem 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .feature-list li i {
+            color: var(--whatsapp);
+            width: 20px;
+        }
+        .order-row {
+            background: var(--bg);
+            border-radius: 60px;
+            padding: 1.2rem 1.5rem;
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+        .order-now {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: var(--primary);
+        }
+        .wa-order-buttons {
+            display: flex;
+            gap: 12px;
+        }
+        .wa-order {
+            background: var(--whatsapp);
+            color: white;
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2rem;
+            text-decoration: none;
+            border: 2px solid white;
+            box-shadow: 0 8px 16px rgba(37,211,102,0.4);
+            animation: wa-pulse 2s infinite;
+        }
+        .wa-order:hover {
+            transform: scale(1.15) rotate(3deg);
+            background: var(--whatsapp-dark);
+            animation: none;
+        }
+        .ready-note {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: var(--text-muted);
+        }
+
+        /* contact section */
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+            max-width: 600px;
+            margin: 2rem auto;
+        }
+        .contact-wa-card {
+            background: var(--surface);
+            border-radius: 40px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+        }
+        .contact-wa-card i {
+            font-size: 4rem;
+            color: var(--whatsapp);
+            margin-bottom: 1rem;
+            animation: wa-pulse 2.4s infinite;
+        }
+        .contact-wa-card a {
+            background: var(--whatsapp);
+            color: white;
+            text-decoration: none;
+            padding: 0.8rem 2rem;
+            border-radius: 60px;
+            font-weight: 600;
+            display: inline-block;
+        }
+
+        /* footer */
+        .zx-footer {
+            background: var(--footer-bg);
+            border-top: 1px solid var(--border);
+            padding: 2rem 0;
+            margin-top: 2rem;
+        }
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .footer-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .footer-wa-icons {
+            display: flex;
+            gap: 20px;
+        }
+        .footer-wa-icons a {
+            color: var(--whatsapp);
+            font-size: 2.2rem;
+            animation: wa-pulse 2.5s infinite;
+        }
+
+        /* page sections */
+        .page-section {
+            display: none;
+        }
+        .page-section.active-page {
+            display: block;
+        }
+
+        @media (max-width: 700px) {
+            .zx-header-inner { flex-wrap: wrap; height: auto; padding: 10px 0; }
+            .nav-menu { order: 3; width: 100%; justify-content: center; }
+            .hero-title { font-size: 2.5rem; }
+            .feature-list { grid-template-columns: 1fr; }
+            .contact-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <!-- ANIMATED VIDEO BACKGROUND -->
+    <div class="video-backdrop">
+        <video autoplay muted loop playsinline>
+            <source src="media/video.D_lho6CD.mp4" type="video/mp4">
+        </video>
+    </div>
+
+    <!-- HEADER -->
+    <header class="zx-header">
+        <div class="zx-container zx-header-inner">
+            <div class="logo-area">
+                <span class="tv-emoji">📺</span>
+                <div class="logo-img">
+                    <img src="ZXGrow.png" alt="ZX Grow" onerror="this.onerror=null; this.src='data:image/svg+xml,%3Csvg xmlns=\'http://www.w3.org/2000/svg\' width=\'200\' height=\'80\' viewBox=\'0 0 200 80\'%3E%3Crect width=\'200\' height=\'80\' fill=\'%23c1121f\' rx=\'20\'/%3E%3Ctext x=\'20\' y=\'52\' font-family=\'Arial\' font-size=\'38\' fill=\'white\' font-weight=\'bold\'%3EZX Grow%3C/text%3E%3C/svg%3E';">
+                </div>
+            </div>
+
+            <!-- NAVIGATION BUTTONS -->
+            <div class="nav-menu">
+                <button class="nav-link active" data-page="home">Home</button>
+                <button class="nav-link" data-page="subscriptions">Subscriptions</button>
+                <button class="nav-link" data-page="contact">Contact</button>
+            </div>
+
+            <!-- WHATSAPP ICONS (swapped) -->
+            <div class="wa-header-icons">
+                <a href="https://wa.me/+447423388897?text=I%20have%20Needed%20Subscription" target="_blank" class="wa-icon"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://wa.me/+447432842818?text=I%20have%20Needed%20Subscription" target="_blank" class="wa-icon"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </header>
+
+    <!-- HOME PAGE (active by default) -->
+    <section id="home-page" class="page-section active-page">
+        <div class="zx-container">
+            <!-- HERO with TWO animated images -->
+            <div class="hero-section">
+                <div class="hero-content">
+                    <div class="hero-badge">WELCOME TO ZX GROW</div>
+                    <h1 class="hero-title">Premium IPTV <span>for Everyone</span></h1>
+                    <p class="hero-desc">ZX Grow – 120,000+ live channels, movies & series in 4K. Instant setup, 24/7 support.</p>
+                    <div class="hero-actions">
+                        <button class="btn-primary" id="homeToSubscriptions"><i class="fas fa-tv"></i> Subscriptions</button>
+                        <a href="https://wa.me/+447423388897?text=I%20want%20a%20free%20trial" target="_blank" class="btn-outline"><i class="fas fa-calendar-alt"></i> Free Trial</a>
+                    </div>
+                </div>
+                <div class="hero-images">
+                    <!-- Two high-quality images with animations -->
+                    <div class="tv-card"><img src="https://images.unsplash.com/photo-1593784991095-a205069470b6?w=400&h=300&fit=crop" alt="movie scene" loading="lazy"></div>
+                    <div class="tv-card"><img src="https://images.unsplash.com/photo-1485846234645-a62644f84728?w=400&h=300&fit=crop" alt="cinema" loading="lazy"></div>
+                </div>
+            </div>
+
+            <!-- PACKAGES - exactly as screenshot -->
+            <div class="packages-container">
+                <!-- 1 Month -->
+                <div class="package-card">
+                    <div class="package-header">
+                        <h2>1 Month</h2>
+                        <div class="package-price">£15.00 <small>/mo</small></div>
+                    </div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> SD / HD / FULL HD / 4K / 8K</li>
+                        <li><i class="fas fa-check-circle"></i> +50 000 CHANNEL + Netflix</li>
+                        <li><i class="fas fa-check-circle"></i> UPDATE SERIES (2025)</li>
+                        <li><i class="fas fa-check-circle"></i> UPDATE MOVIES (2025)</li>
+                        <li><i class="fas fa-check-circle"></i> UPDATE MOVIES (2026)</li>
+                        <li><i class="fas fa-check-circle"></i> Prime Video / Disney+</li>
+                        <li><i class="fas fa-check-circle"></i> Support 247/365</li>
+                        <li><i class="fas fa-check-circle"></i> 100% Anonymous</li>
+                        <li><i class="fas fa-check-circle"></i> No freezing</li>
+                        <li><i class="fas fa-check-circle"></i> All device supported</li>
+                    </ul>
+                    <div class="order-row">
+                        <span class="order-now">ORDER NOW</span>
+                        <div class="wa-order-buttons">
+                            <a href="https://wa.me/+447423388897?text=I%20have%20Needed%20Subscription" target="_blank" class="wa-order"><i class="fab fa-whatsapp"></i></a>
+                            <a href="https://wa.me/+447432842818?text=I%20have%20Needed%20Subscription" target="_blank" class="wa-order"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                        <span class="ready-note"><i class="fas fa-clock"></i> Ready within 5-7mins</span>
+                    </div>
+                </div>
+
+                <!-- 6 Months (popular) -->
+                <div class="package-card popular">
+                    <div class="package-header">
+                        <h2>6 Months</h2>
+                        <div class="package-price">£29.00 <small>/6mo</small></div>
+                    </div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> SD / HD / FULL HD / 4K / 8K</li>
+                        <li><i class="fas fa-check-circle"></i> +60 000 CHANNEL + Netflix</li>
+                        <li><i class="fas fa-check-circle"></i> UPDATE SERIES (2025)</li>
+                        <li><i class="fas fa-check-circle"></i> UPDATE MOVIES (2025)</li>
+                        <li><i class="fas fa-check-circle"></i> Prime Video / Disney+</li>
+                        <li><i class="fas fa-check-circle"></i> Support 247/365</li>
+                        <li><i class="fas fa-check-circle"></i> 100% Anonymous</li>
+                        <li><i class="fas fa-check-circle"></i> No freezing</li>
+                        <li><i class="fas fa-check-circle"></i> All device supported</li>
+                    </ul>
+                    <div class="order-row">
+                        <span class="order-now">ORDER NOW</span>
+                        <div class="wa-order-buttons">
+                            <a href="https://wa.me/+447423388897?text=I%20have%20Needed%20Subscription" target="_blank" class="wa-order"><i class="fab fa-whatsapp"></i></a>
+                            <a href="https://wa.me/+447432842818?text=I%20have%20Needed%20Subscription" target="_blank" class="wa-order"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                        <span class="ready-note"><i class="fas fa-clock"></i> Ready within 5-7mins</span>
+                    </div>
+                </div>
+
+                <!-- 12 Months -->
+                <div class="package-card">
+                    <div class="package-header">
+                        <h2>12 Months</h2>
+                        <div class="package-price">£55.00 <small>/year</small></div>
+                    </div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> SD / HD / FULL HD / 4K / 8K</li>
+                        <li><i class="fas fa-check-circle"></i> +60 000 CHANNEL + Netflix</li>
+                        <li><i class="fas fa-check-circle"></i> UPDATE SERIES (2025)</li>
+                        <li><i class="fas fa-check-circle"></i> UPDATE MOVIES (2025)</li>
+                        <li><i class="fas fa-check-circle"></i> Prime Video / Disney+</li>
+                        <li><i class="fas fa-check-circle"></i> Support 247/365</li>
+                        <li><i class="fas fa-check-circle"></i> 100% Anonymous</li>
+                        <li><i class="fas fa-check-circle"></i> No freezing</li>
+                        <li><i class="fas fa-check-circle"></i> All device supported</li>
+                    </ul>
+                    <div class="order-row">
+                        <span class="order-now">ORDER NOW</span>
+                        <div class="wa-order-buttons">
+                            <a href="https://wa.me/+447423388897?text=I%20have%20Needed%20Subscription" target="_blank" class="wa-order"><i class="fab fa-whatsapp"></i></a>
+                            <a href="https://wa.me/+447432842818?text=I%20have%20Needed%20Subscription" target="_blank" class="wa-order"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                        <span class="ready-note"><i class="fas fa-clock"></i> Ready within 5-7mins</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- SUBSCRIPTIONS PAGE -->
+    <section id="subscriptions-page" class="page-section">
+        <div class="zx-container">
+            <h1 style="font-size:2.8rem; margin: 1rem 0;">📺 subscription plans</h1>
+            <div class="packages-container">
+                <!-- 1 Month -->
+                <div class="package-card">
+                    <div class="package-header"><h2>1 Month</h2><div class="package-price">£15.00</div></div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> +50 000 CHANNEL + Netflix</li>
+                        <li><i class="fas fa-check-circle"></i> 4K/8K support</li>
+                    </ul>
+                    <div class="order-row">
+                        <span class="order-now">ORDER NOW</span>
+                        <div class="wa-order-buttons">
+                            <a href="https://wa.me/+447423388897?text=I%20have%20Needed%20Subscription" class="wa-order"><i class="fab fa-whatsapp"></i></a>
+                            <a href="https://wa.me/+447432842818?text=I%20have%20Needed%20Subscription" class="wa-order"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                        <span class="ready-note">5-7mins</span>
+                    </div>
+                </div>
+                <!-- 6 Months -->
+                <div class="package-card popular">
+                    <div class="package-header"><h2>6 Months</h2><div class="package-price">£29.00</div></div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> +60 000 CHANNEL + Netflix</li>
+                        <li><i class="fas fa-check-circle"></i> Prime Video / Disney+</li>
+                    </ul>
+                    <div class="order-row">
+                        <span class="order-now">ORDER NOW</span>
+                        <div class="wa-order-buttons">
+                            <a href="https://wa.me/+447423388897?text=I%20have%20Needed%20Subscription" class="wa-order"><i class="fab fa-whatsapp"></i></a>
+                            <a href="https://wa.me/+447432842818?text=I%20have%20Needed%20Subscription" class="wa-order"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                        <span class="ready-note">5-7mins</span>
+                    </div>
+                </div>
+                <!-- 12 Months -->
+                <div class="package-card">
+                    <div class="package-header"><h2>12 Months</h2><div class="package-price">£55.00</div></div>
+                    <ul class="feature-list">
+                        <li><i class="fas fa-check-circle"></i> +60 000 CHANNEL + Netflix</li>
+                        <li><i class="fas fa-check-circle"></i> Best value</li>
+                    </ul>
+                    <div class="order-row">
+                        <span class="order-now">ORDER NOW</span>
+                        <div class="wa-order-buttons">
+                            <a href="https://wa.me/+447423388897?text=I%20have%20Needed%20Subscription" class="wa-order"><i class="fab fa-whatsapp"></i></a>
+                            <a href="https://wa.me/+447432842818?text=I%20have%20Needed%20Subscription" class="wa-order"><i class="fab fa-whatsapp"></i></a>
+                        </div>
+                        <span class="ready-note">5-7mins</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CONTACT PAGE -->
+    <section id="contact-page" class="page-section">
+        <div class="zx-container">
+            <h1 style="font-size:2.8rem; text-align:center;">📞 contact us</h1>
+            <div class="contact-grid">
+                <div class="contact-wa-card">
+                    <i class="fab fa-whatsapp"></i>
+                    <h3>Support 1</h3>
+                    <a href="https://wa.me/+447423388897?text=I%20have%20Needed%20Subscription" target="_blank">Chat now</a>
+                </div>
+                <div class="contact-wa-card">
+                    <i class="fab fa-whatsapp"></i>
+                    <h3>Support 2</h3>
+                    <a href="https://wa.me/+447432842818?text=I%20have%20Needed%20Subscription" target="_blank">Chat now</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="zx-footer">
+        <div class="zx-container footer-inner">
+            <div class="footer-logo">
+                <span class="tv-emoji" style="font-size:2rem;">📺</span>
+                <img src="ZXGrow.png" alt="ZX Grow" onerror="this.style.display='none';" style="height:40px;">
+                <span>© 2026 ZX Grow</span>
+            </div>
+            <div class="footer-wa-icons">
+                <a href="https://wa.me/+447423388897?text=I%20have%20Needed%20Subscription" target="_blank"><i class="fab fa-whatsapp"></i></a>
+                <a href="https://wa.me/+447432842818?text=I%20have%20Needed%20Subscription" target="_blank"><i class="fab fa-whatsapp"></i></a>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // ===== FIXED NAVIGATION =====
+        const navBtns = document.querySelectorAll('.nav-link');
+        const pages = {
+            home: document.getElementById('home-page'),
+            subscriptions: document.getElementById('subscriptions-page'),
+            contact: document.getElementById('contact-page')
+        };
+
+        function switchPage(pageId) {
+            navBtns.forEach(btn => {
+                btn.classList.toggle('active', btn.getAttribute('data-page') === pageId);
+            });
+            Object.values(pages).forEach(p => p.classList.remove('active-page'));
+            if (pages[pageId]) pages[pageId].classList.add('active-page');
+        }
+
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                e.preventDefault();
+                switchPage(btn.getAttribute('data-page'));
+            });
+        });
+
+        document.getElementById('homeToSubscriptions').addEventListener('click', (e) => {
+            e.preventDefault();
+            switchPage('subscriptions');
+        });
+
+        switchPage('home');
+    </script>
+</body>
+</html>
